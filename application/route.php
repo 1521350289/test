@@ -22,5 +22,6 @@
 use think\Route;
 
 Route::get('/admin/:version/login','admin/:version.index/login');
+Route::get('/admin/:version/captcha','admin/:version.index/captcha');
 
 

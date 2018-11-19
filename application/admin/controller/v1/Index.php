@@ -10,8 +10,11 @@ namespace app\admin\controller\v1;
 
 
 use app\admin\controller\BaseController;
+use app\lib\exception\ParameterException;
 use app\validate\Login;
 use think\captcha\Captcha;
+use app\admin\service\Login as LoginService;
+use app\admin\model\User as UserModel;
 
 class Index extends BaseController
 {
@@ -20,11 +23,26 @@ class Index extends BaseController
         return $this->fetch('../view/index');
     }
 
-    public function login()
+    public function login($username,$password,$code)
     {
         (new Login())->goCheck();
-        
-        return 123;
+        $captchaCheck = LoginService::CheckCaptcha($code);
+        /*if (!$captchaCheck){
+            throw new ParameterException([
+                'code'=>400,
+                'msg'=>'验证码错误!',
+                'errorCode'=>999
+            ]);
+        }*/
+        $check = UserModel::getByUsername($username,$password);
+        if (!$check){
+            echo '用户名错了';die;
+        }
+        return [
+            'code'=>200,
+            'msg'=>'登录成功',
+            'errorCode'=>0
+        ];
     }
 
     public function captcha()
